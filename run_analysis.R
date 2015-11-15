@@ -1,43 +1,53 @@
-## setting working directory where data sit
+## read dataset and row bind datasets of train and test for measurements, 
+## activity Id, and subject Id
 
-setwd('./UCI HAR Dataset')
-
-# Read and row bind datasets of train and test group
-
-data_X <- rbind(read.table('train/X_train.txt'),
-                read.table('test/X_test.txt'))
-data_y <- rbind(read.table('train/y_train.txt', col.names='Activity.Id'),
+X_table <- rbind(read.table('train/X_train.txt'), read.table('test/X_test.txt'))
+Y_table <- rbind(read.table('train/y_train.txt', col.names='Activity.Id'),
                 read.table('test/y_test.txt', col.names='Activity.Id'))
-data_subj <- rbind(read.table('train/subject_train.txt', col.names='Subject.Id'),
+Subject_table <- rbind(read.table('train/subject_train.txt', col.names='Subject.Id'),
                    read.table('test/subject_test.txt', col.names='Subject.Id'))
 
-# read feature name, and give it to variable name of the data, i.e., column names
+## extract or read feature names, and make them variable names, i.e., column names
 
-features <- read.table('features.txt', col.names=c('Feature.Id', 'Feature.Name'))
-names(data_X) <- features$Feature.Name
+Features <- read.table('features.txt', col.names=c('Feature.Id', 'Feature.Name'))
+names(X_table) <- Features$Feature.Name
 
-# grep (or select) column names having mean or std, and create a corresponding data frame
+## select column names having "mean" or "std", and create a corresponding data frame
 
-col_idx <- grep("-(mean|std)\\(\\)-", features$Feature.Name)
-mean_std_data_X <- data_X[, col_idx]
+mean_Column_index <- grep("mean()", Features$Feature.Name, fixed = T)
+std_Column_index <- grep("std()", Features$Feature.Name, fixed = T)
+Column_index <- c(mean_Column_index, std_Column_index)
+Mean_StandardDeviation_Table <- X_table[, Column_index]
 
-# give corresponding ID activity name to each activity
+## give corresponding ID activity name to each activity
 
-activities <- read.table('activity_labels.txt', col.names=c('Activity.Id', 'Activity'))
-data_y <- merge(data_y, activities)
-data_y$Activity.Id <- NULL
+Activities <- read.table('activity_labels.txt', col.names=c('Activity.Id', 'Activity'))
+Y_table <- merge(Y_table, Activities)
+Y_table$Activity.Id <- NULL
 
-# attach subject ID and activity columns to the data set
+## column bind subject ID and activity columns to the data set
 
-tidyData <- cbind(data_subj, data_y, mean_std_data_X)
+tidy_data <- cbind(Subject_table, Y_table, Mean_StandardDeviation_Table)
 
-# meld and dcast to find mean of activity
+## melt and dcast to find mean of an activity of a subject
 
 library(reshape2)
-tidyDataAvg <- dcast(melt(tidyData, id.vars=c('Subject.Id', 'Activity')),
-                     Subject.Id + Activity ~ variable,
-                     mean)
 
-# write it to tidy_data file
+Activity_melt <- melt(tidy_data, id.vars=c('Subject.Id', 'Activity'))
+tidy_data_Average <- dcast(Activity_melt, Subject.Id + Activity ~ variable, mean)
 
-write.table(tidyDataAvg, file='tidy_Data.txt', row.names=F)
+## change the column names to more descriptive names
+
+Descriptive_title <- names(tidy_data_Average)
+Descriptive_title <- gsub("tBodyAcc", "time-domain-Body-Acceleration-", Descriptive_title)
+Descriptive_title <- gsub("fBodyAcc", "frequency-domain-Body-Acceleration-", Descriptive_title)
+Descriptive_title <- gsub("tGravityAcc", "time-domain-Gravity-Acceleration-", Descriptive_title)
+Descriptive_title <- gsub("tBodyGyro", "time-domain-Body-Gyroscope-", Descriptive_title)
+Descriptive_title <- gsub("fBodyGyro", "frequency-domain-Body-Gyroscope-", Descriptive_title)
+Descriptive_title <- gsub("fBodyBodyAcc", "frequency-domain-Body-Body-Acceleration-", Descriptive_title)
+Descriptive_title <- gsub("fBodyBodyGyro", "frequency-domain-Body-Body-Gyroscope-", Descriptive_title)
+names(tidy_data_Average) <- Descriptive_title
+
+## write it to tidy_data.txt file
+
+write.table(tidy_data_Average, file='tidy_data.txt', row.names=F)
