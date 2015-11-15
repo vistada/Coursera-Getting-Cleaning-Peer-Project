@@ -8,3 +8,5 @@ prefix 't' to denote time domain, prefix 'f' to indicate frequency domain signal
 
 In order to make the feature name more descriptive, the R script made the following change ro the feature names:
 "tBodyAcc" -> "time-domain-Body-Acceleration", "fBodyAcc" -> "frequency-domain-Body-Acceleration", "tGravityAcc" -> "time-domain-Gravity-Acceleration", "tBodyGyro" -> "time-domain-Body-Gyroscope", "fBodyGyro" -> "frequency-domain-Body-Gyroscope"
+
+The input data are stored in text files that are read using "read.table" of R. Three data frame variables, "X_table" for macchine generated data, "Y_table" for activity ID, and "Subject_table" for subject ID. Train data and test date are combined by row-binding two data. Feature names are read from another text file, and they become column names of the data set. It then selects column names having mean or std. It then creates a tidy data set with the average of each variable for each activity and each subject. The column name of  this tidy data set are changed to be more descriptive. Finally, this data frame is written to a text file called "tidy_data.txt."
