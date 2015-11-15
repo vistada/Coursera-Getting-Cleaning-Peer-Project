@@ -1,6 +1,6 @@
-# Peer Assessments of Getting and Cleaning Data
+# Peer Assessments of Getting and Cleaning Data course project
 
-### The following will show an execution of the code run_analysis.R describing how the code works.
+### The following explains how the script "run_analysis.R" work.
 
 read dataset and row bind datasets of train and test for measurements, activity Id, and subject Id
 
@@ -36,7 +36,7 @@ Features <- read.table('features.txt', col.names=c('Feature.Id', 'Feature.Name')
 names(X_table) <- Features$Feature.Name
 ```
 
-five column names of X_table
+top column names of X_table
 
 ```r
 head(names(X_table))
@@ -142,7 +142,7 @@ Y_table <- merge(Y_table, Activities)
 Y_table$Activity.Id <- NULL
 ```
 
-top 5 entries of Y_table
+top entries of Y_table
 
 ```r
 head(Y_table)

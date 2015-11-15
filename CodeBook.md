@@ -17,6 +17,6 @@ NO CHANGES WERE MADE TO THIS DATA SO THAT IT REMAINS RAW DATA.
 
 The tidy data
 
-1. The tidy data contains 35 object of 68 variables. The variables are either mean or standard deviation. Each column represents a single variable satisfying the tidy data principle.
+1. The tidy data contains 35 object of 68 variables. The variables are either mean or standard deviation along with "Subject ID" and "activity". Each column represents a single variable satisfying the tidy data principle.
 2. A row contains an unique combination of Subject ID and activity, s.a. (subject 7 & walking), (subject 8 & walking), (subject 8 & walking_upstairs) satisfying the tidy data principles of "each different observation of that variable should be in a different row."
 3. There is only one final table containing all variables so that no linking of multiple tables are necessary.
